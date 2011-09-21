@@ -3,7 +3,7 @@
 ##        Mod title:  Attachment Mod
 ##
 ##      Mod version:  2.1.1
-##  Works on FluxBB:  1.4.5, 1.4.4, 1.4.3, 1.4.2, 1.4.1, 1.4.0, 1.4-rc3
+##  Works on FluxBB:  1.4.7, 1.4.6, 1.4.5, 1.4.4, 1.4.3, 1.4.2, 1.4.1, 1.4.0, 1.4-rc3
 ##     Release date:  2011-04-27
 ##      Review date:  2011-04-27
 ##           Author:  Daris (daris91@gmail.com)
