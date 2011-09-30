@@ -2,10 +2,10 @@
 ##
 ##        Mod title:  Attachment Mod
 ##
-##      Mod version:  2.1.1
+##      Mod version:  2.1.2
 ##  Works on FluxBB:  1.4.7, 1.4.6, 1.4.5, 1.4.4, 1.4.3, 1.4.2, 1.4.1, 1.4.0, 1.4-rc3
-##     Release date:  2011-04-27
-##      Review date:  2011-04-27
+##     Release date:  2011-09-30
+##      Review date:  2011-09-30
 ##           Author:  Daris (daris91@gmail.com)
 ##
 ##      Description:  This mod will add the ability for attachments being
@@ -130,57 +130,43 @@ install_mod.php
 
 install_mod.php
 
+
 #
 #---------[ 2. OPEN ]---------------------------------------------------------
 #
 
-delete.php
+include/functions.php
 
 
 #
-#---------[ 3. FIND (line: 27) ]----------------------------------------------
+#---------[ 3. FIND (delete_topic function) ]----------------------------------------------
 #
 
-require PUN_ROOT.'include/common.php';
-
-
-#
-#---------[ 4. AFTER, ADD ]---------------------------------------------------
-#
-
-require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads variables, functions and lang file
+	// Delete the topic and any redirect topics
+	$db->query('DELETE FROM '.$db->prefix.'topics WHERE id='.$topic_id.' OR moved_to='.$topic_id) or error('Unable to delete topic', __FILE__, __LINE__, $db->error());
 
 
 #
-#---------[ 5. FIND (line: 75) ]----------------------------------------------
+#---------[ 4. BEFORE, ADD ]---------------------------------------------------
 #
 
-	if ($is_topic_post)
-	{
-
-
-#
-#---------[ 6. AFTER, ADD ]---------------------------------------------------
-#
-
-		attach_delete_thread($cur_post['tid']);	// Attachment Mod , delete the attachments in the whole thread (orphan check is checked in this function)
+	require_once PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads variables, functions and lang file
+	attach_delete_thread($topic_id);	// Attachment Mod , delete the attachments in the whole thread (orphan check is checked in this function)
 
 
 #
-#---------[ 7. FIND (line: 82) ]----------------------------------------------
+#---------[ 5. FIND (delete_post function) ]----------------------------------------------
 #
 
-		redirect('viewforum.php?id='.$cur_post['fid'], $lang_delete['Topic del redirect']);
-	}
-	else
-	{
+	$result = $db->query('SELECT id, poster, posted FROM '.$db->prefix.'posts WHERE topic_id='.$topic_id.' ORDER BY id DESC LIMIT 2') or error('Unable to fetch post info', __FILE__, __LINE__, $db->error());
 
 
 #
-#---------[ 8. AFTER, ADD ]---------------------------------------------------
+#---------[ 6. BEFORE, ADD ]---------------------------------------------------
 #
 
-		attach_delete_post($id);	// Attachment Mod , delete the attachments in this post (orphan check is checked in this function)
+	require_once PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads variables, functions and lang file
+	attach_delete_post($post_id);	// Attachment Mod , delete the attachments in this post (orphan check is checked in this function)
 
 
 #
