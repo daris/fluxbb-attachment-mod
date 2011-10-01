@@ -14,7 +14,7 @@
 ##
 ##   Repository URL:  http://fluxbb.org/resources/mods/attachment-mod/
 ##
-##   Affected files:  delete.php
+##   Affected files:  include/functions.php
 ##                    edit.php
 ##                    moderate.php
 ##                    post.php
