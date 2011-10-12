@@ -3,13 +3,13 @@
 
 // Some info about your mod.
 $mod_title      = 'Attachment Mod';
-$mod_version    = '2.1.2';
-$release_date   = '2011-09-30';
+$mod_version    = '2.1.3';
+$release_date   = '2011-10-12';
 $author         = 'Daris';
 $author_email   = 'daris91@gmail.com';
 
 // One or more versions of FluxBB that this mod works on. The version names must match exactly!
-$fluxbb_versions= array('1.4.7', '1.4.6', '1.4.5', '1.4.4', '1.4.3', '1.4.2', '1.4.1', '1.4.0', '1.4-rc3');
+$fluxbb_versions= array('1.4.7', '1.4.6');
 
 // Set this to false if you haven't implemented the restore function (see below)
 $mod_restore	= true;

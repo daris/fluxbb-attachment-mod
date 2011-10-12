@@ -92,32 +92,33 @@ if (($attach_extension=='jpg' || $attach_extension=='jpeg' || $attach_extension=
 </div>	
 	<?php	
 	require 'footer.php';
-	exit();
-}else{ // put the file out for download
-	// update number of downloads
-	$result = $db->query('UPDATE '.$db->prefix.'attach_2_files SET downloads=downloads+1 WHERE id='.$attach_item) or error();
 
-	// open a pointer to the file
-	$fp = fopen($pun_config['attach_basefolder'].$attach_location, "rb");
-	if(!$fp){
-		message($lang_common['Bad request']);
-	}else{
-		$attach_filename=rawurlencode($attach_filename);	// fix filename (spaces may still mess things up, perhaps add a specific MSIE thing later, not sure though)
-
-		// send some headers
-		header('Content-Disposition: attachment; filename='.$attach_filename);
-		if(strlen($attach_mime)!=0)
-			header('Content-Type: ' . $attach_mime );
-		else
-			header('Content-type: application/octet-stream'); // a default mime is nothing is defined for the file
-		
-		header('Pragma: no-cache'); //hmm, I suppose this might be possible to skip, to save some bw, but I'm far from sure, so I let the 'no cache stuff' be...
-		header('Expires: 0'); 
-		header('Connection: close'); // Thanks to Dexus for figuring out this header (on some systems there was a delay for 5-7s for downloading)
-		if($attach_size!=0)
-			header('Content-Length: '.$attach_size);
-		
-		// and finally send the file, fpassthru might be replaced later, rumors say fpassthru use alot of memory...
-		fpassthru($fp);
-	}
 }
+
+// put the file out for download
+// update number of downloads
+$result = $db->query('UPDATE '.$db->prefix.'attach_2_files SET downloads=downloads+1 WHERE id='.$attach_item) or error('Unable to update downloads',__FILE__,__LINE__,$db->error());
+$db->close(); // end db connection - needed for other than mysql db
+
+// open a pointer to the file
+$fp = fopen($pun_config['attach_basefolder'].$attach_location, "rb");
+if(!$fp)
+	message($lang_common['Bad request']);
+
+$attach_filename=rawurlencode($attach_filename);	// fix filename (spaces may still mess things up, perhaps add a specific MSIE thing later, not sure though)
+
+// send some headers
+header('Content-Disposition: attachment; filename='.$attach_filename);
+if(strlen($attach_mime)!=0)
+	header('Content-Type: ' . $attach_mime );
+else
+	header('Content-type: application/octet-stream'); // a default mime is nothing is defined for the file
+
+header('Pragma: no-cache'); //hmm, I suppose this might be possible to skip, to save some bw, but I'm far from sure, so I let the 'no cache stuff' be...
+header('Expires: 0'); 
+header('Connection: close'); // Thanks to Dexus for figuring out this header (on some systems there was a delay for 5-7s for downloading)
+if($attach_size!=0)
+	header('Content-Length: '.$attach_size);
+
+// and finally send the file, fpassthru might be replaced later, rumors say fpassthru use alot of memory...
+fpassthru($fp);

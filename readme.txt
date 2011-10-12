@@ -2,10 +2,10 @@
 ##
 ##        Mod title:  Attachment Mod
 ##
-##      Mod version:  2.1.2
-##  Works on FluxBB:  1.4.7, 1.4.6, 1.4.5, 1.4.4, 1.4.3, 1.4.2, 1.4.1, 1.4.0, 1.4-rc3
-##     Release date:  2011-09-30
-##      Review date:  2011-09-30
+##      Mod version:  2.1.3
+##  Works on FluxBB:  1.4.7, 1.4.6
+##     Release date:  2011-10-12
+##      Review date:  2011-10-12
 ##           Author:  Daris (daris91@gmail.com)
 ##
 ##      Description:  This mod will add the ability for attachments being

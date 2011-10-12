@@ -242,23 +242,23 @@ if(isset($_POST['read_documentation'])){	// the user wants to read the documenta
 	if(isset($_POST['order']))
 		switch (intval($_POST['order'])){
 			case 0:
-				$attach_result_order = 'id';
+				$attach_result_order = 'af.id';
 				break;
 			case 1:
-				$attach_result_order = 'downloads';
+				$attach_result_order = 'af.downloads';
 				break;
 			case 2:
-				$attach_result_order = 'size';
+				$attach_result_order = 'af.size';
 				break;
 			case 3:
-				$attach_result_order = 'downloads*size';
+				$attach_result_order = 'af.downloads*af.size';
 				break;
 			default:
-				$attach_result_order = 'id';
+				$attach_result_order = 'af.id';
 				break;
 		}
 	else
-		$attach_result_order = 'id';
+		$attach_result_order = 'af.id';
 
 	generate_admin_menu($plugin);	// Display the admin navigation menu
 ?>
@@ -287,7 +287,7 @@ if(isset($_POST['read_documentation'])){	// the user wants to read the documenta
 							<tr>
 								<th scope="row">Order</th>
 								<td>
-									<span><input type="radio" name="order" value="0" tabindex="5" <?php echo ($attach_result_order == 'id')?'checked="checked" ':''; ?>/>ID <input type="radio" name="order" value="1" tabindex="6" <?php echo ($attach_result_order == 'downloads')?'checked="checked" ':''; ?>/>Downloads <input type="radio" name="order" value="2" tabindex="7" <?php echo ($attach_result_order == 'size')?'checked="checked" ':''; ?>/>Size <input type="radio" name="order" value="3" tabindex="8" <?php echo ($attach_result_order == 'downloads*size')?'checked="checked" ':''; ?>/>Total transfer</span>
+									<span><input type="radio" name="order" value="0" tabindex="5" <?php echo ($attach_result_order == 'af.id')?'checked="checked" ':''; ?>/>ID <input type="radio" name="order" value="1" tabindex="6" <?php echo ($attach_result_order == 'af.downloads')?'checked="checked" ':''; ?>/>Downloads <input type="radio" name="order" value="2" tabindex="7" <?php echo ($attach_result_order == 'af.size')?'checked="checked" ':''; ?>/>Size <input type="radio" name="order" value="3" tabindex="8" <?php echo ($attach_result_order == 'af.downloads*af.size')?'checked="checked" ':''; ?>/>Total transfer</span>
 								</td>
 							</tr>
 							<tr>
@@ -385,7 +385,7 @@ elseif (isset($_POST['delete_attachment']))
 elseif(isset($_POST['list_orphans']))
 {
 	//search for all attachments ...
-	$result = $db->query('SELECT af.id, af.owner, af.post_id, af.filename, af.extension, af.size, af.downloads, u.username FROM `'.$db->prefix.'attach_2_files` AS af LEFT JOIN `'.$db->prefix.'posts` AS p ON p.id=af.post_id LEFT JOIN '.$db->prefix.'users AS u ON u.id=af.owner WHERE p.id IS NULL') or error('Unable to fetch attachments',__FILE__,__LINE__,$db->error());
+	$result = $db->query('SELECT af.id, af.owner, af.post_id, af.filename, af.extension, af.size, af.downloads, u.username FROM '.$db->prefix.'attach_2_files AS af LEFT JOIN '.$db->prefix.'posts AS p ON p.id=af.post_id LEFT JOIN '.$db->prefix.'users AS u ON u.id=af.owner WHERE p.id IS NULL') or error('Unable to fetch attachments',__FILE__,__LINE__,$db->error());
 	
 	if (!$db->num_rows($result))
 		message('No orphans found. Yipeee. :)');
@@ -445,7 +445,7 @@ elseif(isset($_POST['list_orphans']))
 
 }elseif(isset($_POST['delete_orphans'])){
 	// search for all orphans, 
-	$result_attach = $db->query('SELECT af.id FROM `'.$db->prefix.'attach_2_files` AS af LEFT JOIN `'.$db->prefix.'posts` AS p ON p.id=af.post_id WHERE p.id IS NULL') or error('Unable to search for orphans',__FILE__,__LINE__,$db->error());
+	$result_attach = $db->query('SELECT af.id FROM '.$db->prefix.'attach_2_files AS af LEFT JOIN '.$db->prefix.'posts AS p ON p.id=af.post_id WHERE p.id IS NULL') or error('Unable to search for orphans',__FILE__,__LINE__,$db->error());
 	// if there is any orphans start deleting them one by one...
 	if($db->num_rows($result_attach)>0){// we have orphan(s)
 		$i=0;
@@ -915,8 +915,11 @@ elseif(isset($_POST['list_orphans']))
 
 	
 }elseif(isset($_POST['optimize_tables'])){
-	$result = $db->query('OPTIMIZE TABLE `'.$db->prefix.'attach_2_files`')or error('Unable to optimize table: attach_2_files',__FILE__,__LINE__,$db->error());
-	$result = $db->query('OPTIMIZE TABLE `'.$db->prefix.'attach_2_rules`')or error('Unable to optimize table: attach_2_rules',__FILE__,__LINE__,$db->error());
+	if ($db_type == 'sqlite')
+		message('SQLite does not support optimizing tables.');
+
+	$result = $db->query('OPTIMIZE TABLE '.$db->prefix.'attach_2_files')or error('Unable to optimize table: attach_2_files',__FILE__,__LINE__,$db->error());
+	$result = $db->query('OPTIMIZE TABLE '.$db->prefix.'attach_2_rules')or error('Unable to optimize table: attach_2_rules',__FILE__,__LINE__,$db->error());
 	redirect($_SERVER['REQUEST_URI'], 'Attachment Mod '.$pun_config['attach_cur_version'].', Tables Optimized &hellip;');
 	
 }elseif(isset($_POST['update_settings'])){
@@ -1088,7 +1091,7 @@ elseif(isset($_POST['list_orphans']))
 		if($attach_number_of_rows!=0){
 			$attach_output = "Number of attachments: $attach_number_of_rows<br />\n						";
 			// figure out the disk usage, taken from the mysql tables ...
-			$result = $db->query('SELECT SUM(size),SUM(downloads),SUM(downloads*size) FROM `'.$db->prefix.'attach_2_files` WHERE 1')or error('Unable to summarize disk usage',__FILE__,__LINE__,$db->error());
+			$result = $db->query('SELECT SUM(size),SUM(downloads),SUM(downloads*size) FROM '.$db->prefix.'attach_2_files WHERE 1')or error('Unable to summarize disk usage',__FILE__,__LINE__,$db->error());
 			if($db->num_rows($result)!=0){
 				list($attach_size,$attach_downloads,$attach_total_transfer) = $db->fetch_row($result);
 				$attach_output .= 'Used diskspace: '.file_size($attach_size)."<br />\n						";

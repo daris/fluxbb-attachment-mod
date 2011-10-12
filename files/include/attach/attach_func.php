@@ -266,7 +266,7 @@ function attach_delete_attachment($item=0){
 			error('Error creating filepointer for file to delete/reset size, for attachment with id: "'.$item.'"',__FILE__,__LINE__);
 		fclose($fp); // file should now be 0 bytes, 'w' will place the pointer at start, and trunate the file... and I don't put anything in there...
 		// if successful, remove the database entry
-		$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_files WHERE id='.intval($item).' LIMIT 1')or error('Unable to delete attachment record in database',__FILE__,__LINE__,$db->error());
+		$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_files WHERE id='.intval($item))or error('Unable to delete attachment record in database',__FILE__,__LINE__,$db->error());
 		return true;
 	}else
 		error('Error deleting attachment, not allowed to delete attachment (item_id=\''.$item.'\')',__FILE__,__LINE__);
