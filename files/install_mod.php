@@ -3,8 +3,8 @@
 
 // Some info about your mod.
 $mod_title      = 'Attachment Mod';
-$mod_version    = '2.1.3';
-$release_date   = '2011-10-12';
+$mod_version    = '2.1.4';
+$release_date   = '2011-10-29';
 $author         = 'Daris';
 $author_email   = 'daris91@gmail.com';
 
@@ -20,7 +20,7 @@ function install($basepath='')
 {
 	global $db, $db_type, $pun_config, $mod_version;
 	//include PUN_ROOT.'include/attach/attach_incl.php';
-	
+
 	if ($basepath == '')
 		$basepath = dirname($_SERVER['SCRIPT_FILENAME']).'/attachments/';
 
@@ -74,10 +74,10 @@ function install($basepath='')
 			),
 			'PRIMARY KEY'		=> array('id'),
 	);
-	
+
 	$db->create_table('attach_2_files', $schema_files) or error('Unable to create table "attach_2_files"', __FILE__, __LINE__, $db->error());
-	
-	
+
+
 	// create the files table
 	$schema_rules = array(
 			'FIELDS'			=> array(
@@ -117,15 +117,15 @@ function install($basepath='')
 			),
 			'PRIMARY KEY'		=> array('id'),
 	);
-	
+
 	$db->create_table('attach_2_rules', $schema_rules) or error('Unable to create table "attach_2_rules"', __FILE__, __LINE__, $db->error());
-	
+
 	//ok path could be correct, try to make a subfolder :D
 	$newname = attach_generate_pathname($basepath);
 	if(!attach_create_subfolder($newname,$basepath))
 		error('Unable to create new subfolder with name "'.$newname.'", make sure php has write access to that folder!',__FILE__,__LINE__);
-	
-		
+
+
 	// ok, add the stuff needed in the config cache
 	$attach_config = array(	'attach_always_deny'	=>	'html"htm"php"php3"php4"php5"exe"com"bat',
 							'attach_basefolder'		=>	$basepath,
@@ -137,7 +137,7 @@ function install($basepath='')
 							'attach_max_size'		=>	'100000',
 							'attach_subfolder'		=>	$newname,
 							'attach_use_icon'		=>	'1');
-	
+
 	foreach($attach_config AS $key => $value)
 		if (!isset($pun_config[$key]))
 			$db->query("INSERT INTO ".$db->prefix."config (conf_name, conf_value) VALUES ('$key', '".$db->escape($value)."')") or error('Unable to add column "'.$key.'" to config table', __FILE__, __LINE__, $db->error());
@@ -145,12 +145,12 @@ function install($basepath='')
 
 	// and now, update the cache...
 	require_once PUN_ROOT.'include/cache.php';
-	generate_config_cache();	
+	generate_config_cache();
 
 }
 
 function attach_create_subfolder($newfolder='',$basepath){
-		
+
 	// check to see if that folder is there already, then just update the config ...
 	if(!is_dir($basepath.$newfolder)){
 		// if the folder doesn't exist, try to create it
@@ -186,7 +186,7 @@ function attach_generate_filename($storagepath, $messagelenght=0, $filesize=0){
 	while($not_unique){
 		$newfile = md5(attach_generate_pathname().$messagelenght.$filesize.'Some more salt keyworbs, change if you want to').'.attach';
 		if(!is_file($storagepath.$newfile))return $newfile;
-	}	
+	}
 }
 
 
@@ -197,7 +197,7 @@ function restore()
 
 		// ok, add the stuff needed in the config cache
 	$attach_config = array(	'attach_always_deny', 'attach_basefolder', 'attach_create_orphans', 'attach_cur_version', 'attach_icon_folder', 'attach_icon_extension', 'attach_icon_name',  'attach_max_size', 'attach_subfolder', 'attach_use_icon');
-	
+
 	foreach($attach_config AS $value)
 		$db->query('DELETE FROM '.$db->prefix.'config WHERE conf_name=\''.$value.'\'') or error('Unable to delete column "'.$value.'" to config table', __FILE__, __LINE__, $db->error());
 

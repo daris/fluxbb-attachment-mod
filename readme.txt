@@ -2,10 +2,10 @@
 ##
 ##        Mod title:  Attachment Mod
 ##
-##      Mod version:  2.1.3
+##      Mod version:  2.1.4
 ##  Works on FluxBB:  1.4.7, 1.4.6
-##     Release date:  2011-10-12
-##      Review date:  2011-10-12
+##     Release date:  2011-10-29
+##      Review date:  2011-10-29
 ##           Author:  Daris (daris91@gmail.com)
 ##
 ##      Description:  This mod will add the ability for attachments being
@@ -29,7 +29,7 @@
 ##                    files, not gigabytes of data, but I have come closer and
 ##                    closer to this, and would like to be able to keep it on
 ##                    files instead.)
-##                    
+##
 ##                    To be able to get attachments, one need to enable upload
 ##                    of files in PHP, and set the max_file_size (and some
 ##                    other variables, so read documentation after installing
@@ -39,14 +39,14 @@
 ##                    one had before installing the first mod (if you have that
 ##                    installed, but I guess you should do that after the files
 ##                    has been converted to disk files)
-##                    
+##
 ##                    There's also no need for editing php files to set options,
 ##                    these are set in the Administration interface, located in
 ##                    the Plugins menu. These are cached and should therefore be
 ##                    at least just as quick (perhaps quicker as they're
 ##                    combined with the forum config), so it's easier to
 ##                    administrate the mod now, adding icons, and such.
-##                    
+##
 ##                    Another great new thing done is that you only have to
 ##                    backup each file once, as there will never be two files
 ##                    with the same name in a directory. So one only need to
@@ -55,13 +55,13 @@
 ##                    folders to keep new attachments to get the same name. As
 ##                    if they would, one would need to download all files during
 ##                    backup procedure.
-##                    
+##
 ##                    And as a further upgrade, posts are no longer limited to
 ##                    one attachment per post. I still have a limit of one file
 ##                    per opportunity (i.e. one on post creation, rest on edit),
-##                    but the admin set the limit of max files per post, a per 
+##                    but the admin set the limit of max files per post, a per
 ##                    group and per forum basis.
-##                    
+##
 ##                    I strongly suggest you read the whole documentation
 ##                    before start using the mod, the documentation is in the
 ##                    Administration interface. Or at the very least the first
@@ -78,8 +78,8 @@
 ##                       possible)
 ##                    3. Make sure php is allowed to create files and
 ##                       directories in the above directory.
-##                    
-##                    Written by Frank H  
+##
+##                    Written by Frank H
 ##                    on: 2005-04-12 17:11
 ##
 ##       DISCLAIMER:  Please note that "mods" are not officially supported by
@@ -175,12 +175,12 @@ include/functions.php
 
 edit.php
 
-	
+
 #
 #---------[ 10. FIND (line: 27) ]---------------------------------------------
 #
 
-require PUN_ROOT.'include/common.php';	
+require PUN_ROOT.'include/common.php';
 
 
 #
@@ -196,12 +196,12 @@ require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads v
 
 		// Update the post
 		$db->query('UPDATE '.$db->prefix.'posts SET message=\''.$db->escape($message).'\', hide_smilies='.$hide_smilies.$edited_sql.' WHERE id='.$id) or error('Unable to update post', __FILE__, __LINE__, $db->error());
-		
+
 
 
 #
 #---------[ 13. AFTER, ADD ]--------------------------------------------------
-#		
+#
 
 		//Attachment Mod 2.0 Block Start
 		//First check if there are any files to delete, the postvariables should be named 'attach_delete_'.$i , if it's set you're going to delete the value of this (the 0 =< $i < attachments, just to get some order in there...)
@@ -215,9 +215,9 @@ require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads v
 					$result_attach = $db->query('SELECT af.owner,ar.rules FROM '.$db->prefix.'attach_2_files AS af, '.$db->prefix.'attach_2_rules AS ar, '.$db->prefix.'posts AS p, '.$db->prefix.'topics AS t WHERE af.id='.$attach_id.' AND ar.group_id='.$pun_user['g_id'].' AND ar.forum_id=t.forum_id AND t.id=p.topic_id AND p.id=af.post_id LIMIT 1') or error('Unable to fetch attachment details and forum rules', __FILE__, __LINE__, $db->error());
 					if($db->num_rows($result_attach)>0||$pun_user['g_id']==PUN_ADMIN){
 						list($attach_cur_owner,$attach_rules)=$db->fetch_row($result_attach);
-						
+
 						$attach_allowed = false;
-						
+
 						if($pun_user['g_id']==PUN_ADMIN)//admin overrides
 							$attach_allowed = true;
 						elseif($attach_cur_owner==$pun_user['id'])//it's the owner of the file that want to delete it
@@ -240,7 +240,7 @@ require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads v
 				}
 			}
 		}
-		
+
 		if (isset($_FILES['attached_file']['error']) && $_FILES['attached_file']['error'] != 0 && $_FILES['attached_file']['error'] != 4)
 			error(file_upload_error_message($_FILES['attached_file']['error']), __FILE__, __LINE__);
 
@@ -252,14 +252,14 @@ require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads v
 				$attach_allowed=true;
 			}else{
 				//fetch forum rules and the number of attachments for this post.
-				$result_attach = $db->query('SELECT COUNT(af.id) FROM '.$db->prefix.'attach_2_files AS af WHERE af.post_id='.$id.' GROUP BY af.post_id LIMIT 1') or error('Unable to fetch current number of attachments in post',__FILE__,__LINE__,$db->error());	
+				$result_attach = $db->query('SELECT COUNT(af.id) FROM '.$db->prefix.'attach_2_files AS af WHERE af.post_id='.$id.' GROUP BY af.post_id LIMIT 1') or error('Unable to fetch current number of attachments in post',__FILE__,__LINE__,$db->error());
 				if($db->num_rows($result_attach)==1){
 					list($attach_num_attachments)=$db->fetch_row($result_attach);
 				}else{
 					$attach_num_attachments=0;
 				}
 
-				$result_attach = $db->query('SELECT ar.rules,ar.size,ar.file_ext,ar.per_post FROM '.$db->prefix.'attach_2_rules AS ar, '.$db->prefix.'posts AS p, '.$db->prefix.'topics AS t WHERE group_id='.$pun_user['g_id'].' AND p.id='.$id.' AND t.id=p.topic_id AND ar.forum_id=t.forum_id LIMIT 1')or error('Unable to fetch attachment rules',__FILE__,__LINE__,$db->error());	
+				$result_attach = $db->query('SELECT ar.rules,ar.size,ar.file_ext,ar.per_post FROM '.$db->prefix.'attach_2_rules AS ar, '.$db->prefix.'posts AS p, '.$db->prefix.'topics AS t WHERE group_id='.$pun_user['g_id'].' AND p.id='.$id.' AND t.id=p.topic_id AND ar.forum_id=t.forum_id LIMIT 1')or error('Unable to fetch attachment rules',__FILE__,__LINE__,$db->error());
 				if($db->num_rows($result_attach)==1){
 					list($attach_rules,$attach_size,$attach_file_ext,$attach_per_post)=$db->fetch_row($result_attach);
 					//first check if the user is allowed to upload
@@ -273,19 +273,19 @@ require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads v
 					$attach_allowed=false;
 				}
 			}
-			// ok, by now we should know if it's allowed to upload or not ... 
-			if($attach_allowed){ //if so upload it ... 
+			// ok, by now we should know if it's allowed to upload or not ...
+			if($attach_allowed){ //if so upload it ...
 				if(!attach_create_attachment($_FILES['attached_file']['name'],$_FILES['attached_file']['type'],$_FILES['attached_file']['size'],$_FILES['attached_file']['tmp_name'],$id,count_chars($message))){
 					error('Error creating attachment, inform the owner of this bulletin board of this problem. (Most likely something to do with rights on the filesystem)',__FILE__,__LINE__);
 				}
 			}
-		}		
-		//Attachment Mod 2.0 Block End		
-		
-		
+		}
+		//Attachment Mod 2.0 Block End
+
+
 #
 #---------[ 14. FIND (line: 205) ]--------------------------------------------
-#	
+#
 
 		redirect('viewtopic.php?pid='.$id.'#p'.$id, $lang_post['Edit redirect']);
 	}
@@ -311,7 +311,7 @@ if($pun_user['g_id']==PUN_ADMIN){
 	$attach_allow_size=$pun_config['attach_max_size'];
 	$attach_per_post=-1;
 }else{
-	$result_attach=$db->query('SELECT ar.rules,ar.size,ar.per_post,COUNT(f.id) FROM '.$db->prefix.'attach_2_rules AS ar, '.$db->prefix.'attach_2_files AS f, '.$db->prefix.'posts AS p, '.$db->prefix.'topics AS t WHERE group_id='.$pun_user['g_id'].' AND p.id='.$id.' AND t.id=p.topic_id AND ar.forum_id=t.forum_id GROUP BY f.post_id LIMIT 1')or error('Unable to fetch attachment rules and current number of attachments in post (#2)',__FILE__,__LINE__,$db->error());	
+	$result_attach=$db->query('SELECT ar.rules,ar.size,ar.per_post,COUNT(f.id) FROM '.$db->prefix.'attach_2_rules AS ar, '.$db->prefix.'attach_2_files AS f, '.$db->prefix.'posts AS p, '.$db->prefix.'topics AS t WHERE group_id='.$pun_user['g_id'].' AND p.id='.$id.' AND t.id=p.topic_id AND ar.forum_id=t.forum_id GROUP BY f.post_id LIMIT 1')or error('Unable to fetch attachment rules and current number of attachments in post (#2)',__FILE__,__LINE__,$db->error());
 	if($db->num_rows($result_attach)==1){
 		list($attach_rules,$attach_allow_size,$attach_per_post,$attach_num_attachments)=$db->fetch_row($result_attach);
 		//may the user delete others attachments?
@@ -331,7 +331,7 @@ if($attach_allow_delete||$attach_allow_owner_delete||$attach_allow_upload){
 	$attach_allowed=true;
 	$result_attach=$db->query('SELECT af.id, af.owner, af.filename, af.extension, af.size, af.downloads FROM '.$db->prefix.'attach_2_files AS af WHERE post_id='.$id) or error('Unable to fetch current attachments',__FILE__,__LINE__,$db->error());
 	if($db->num_rows($result_attach)>0){
-		//time for some output ... create the existing files ... 
+		//time for some output ... create the existing files ...
 		$i=0;
 		while(list($attach_id,$attach_owner,$attach_filename,$attach_extension,$attach_size,$attach_downloads)=$db->fetch_row($result_attach)){
 			if(($attach_owner==$pun_user['id']&&$attach_allow_owner_delete)||$attach_allow_delete)
@@ -354,9 +354,9 @@ if($attach_allow_upload){
 	if(strlen($attach_output)>0)$attach_output .= "<br />\n";
 	if($attach_per_post==-1)$attach_per_post = '<em>unlimited</em>';
 	$attach_output .= str_replace('%%ATTACHMENTS%%',$attach_per_post,$lang_attach['Upload'])."<br />\n".'<input type="hidden" name="MAX_FILE_SIZE" value="'.$attach_allow_size.'" /><input type="file" name="attached_file" size="80" />';
-	
-	
-	
+
+
+
 }
 //Attachment Mod 2.0 Block End
 
@@ -371,7 +371,7 @@ if($attach_allow_upload){
 
 #
 #---------[ 17. REPLACE WITH ]------------------------------------------------
-#		
+#
 
 		<form id="edit" method="post" <?php echo 'enctype="multipart/form-data"'; ##Attachment Mod 2.0 ?> action="edit.php?id=<?php echo $id ?>&amp;action=edit" onsubmit="return process_form(this)">
 
@@ -471,7 +471,7 @@ post.php
 #---------[ 28. FIND (line: 27) ]---------------------------------------------
 #
 
-require PUN_ROOT.'include/common.php';	
+require PUN_ROOT.'include/common.php';
 
 
 #
@@ -499,17 +499,17 @@ require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads v
 		// Attachment Mod Block Start
 		if (isset($_FILES['attached_file']['error']) && $_FILES['attached_file']['error'] != 0 && $_FILES['attached_file']['error'] != 4)
 			error(file_upload_error_message($_FILES['attached_file']['error']), __FILE__, __LINE__);
-		
+
 		if (isset($_FILES['attached_file'])&&$_FILES['attached_file']['size']!=0&&is_uploaded_file($_FILES['attached_file']['tmp_name'])){
 			//fetch the rules for this forum for this group
-			$attach_result = $db->query('SELECT rules,size,file_ext FROM '.$db->prefix.'attach_2_rules WHERE group_id='.$pun_user['g_id'].' AND forum_id='.$cur_posting['id'].' LIMIT 1')or error('Unable to fetch attachment rules',__FILE__,__LINE__,$db->error());	
+			$attach_result = $db->query('SELECT rules,size,file_ext FROM '.$db->prefix.'attach_2_rules WHERE group_id='.$pun_user['g_id'].' AND forum_id='.$cur_posting['id'].' LIMIT 1')or error('Unable to fetch attachment rules',__FILE__,__LINE__,$db->error());
 			if($db->num_rows($attach_result)!=0||$pun_user['g_id']==PUN_ADMIN){
 				$attach_rules=0; $attach_size=0; $attach_file_ext=''; // just some defaults to get the parser to stop nagging me if it's an admin :D
 				if($db->num_rows($attach_result)!=0)
 					list($attach_rules,$attach_size,$attach_file_ext)=$db->fetch_row($attach_result);
 				//check so that the user is allowed to upload
 				if(attach_allow_upload($attach_rules,$attach_size,$attach_file_ext,$_FILES['attached_file']['size'],$_FILES['attached_file']['name'])){
-					// ok we're allowed to post ... time to fix everything... 
+					// ok we're allowed to post ... time to fix everything...
 					if(!attach_create_attachment($_FILES['attached_file']['name'],$_FILES['attached_file']['type'],$_FILES['attached_file']['size'],$_FILES['attached_file']['tmp_name'],$new_pid,count_chars($message))){
 						error('Error creating attachment, inform the owner of this bulletin board of this problem. (Most likely something to do with rights on the filesystem)',__FILE__,__LINE__);
 					}
@@ -524,7 +524,7 @@ require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads v
 		}
 		// Attachment Mod Block End
 
-		
+
 #
 #---------[ 32. FIND (line: 358) ]--------------------------------------------
 #
@@ -534,8 +534,8 @@ require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads v
 
 #
 #---------[ 33. REPLACE WITH ]------------------------------------------------
-#	
-	
+#
+
 	$form = '<form id="post" method="post" enctype="multipart/form-data" action="post.php?action=post&amp;tid='.$tid.'" onsubmit="this.submit.disabled=true;if(process_form(this)){return true;}else{this.submit.disabled=false;return false;}">'; //Attachment Mod has added enctype="multipart/form-data"
 
 
@@ -567,14 +567,14 @@ require PUN_ROOT.'header.php';
 //Attachment Mod Block Start
 //Fetch some stuff so we know if the user is allowed to attach files to the post ... oh and preview won't work... I'm not going to add shitload of stuff to get some temporary upload area ;)
 $attach_allowed = false;
-$attach_result = $db->query('SELECT rules,size FROM '.$db->prefix.'attach_2_rules WHERE group_id='.$pun_user['g_id'].' AND forum_id='.$cur_posting['id'].' LIMIT 1')or error('Unable to fetch attachment rules',__FILE__,__LINE__,$db->error());	
+$attach_result = $db->query('SELECT rules,size FROM '.$db->prefix.'attach_2_rules WHERE group_id='.$pun_user['g_id'].' AND forum_id='.$cur_posting['id'].' LIMIT 1')or error('Unable to fetch attachment rules',__FILE__,__LINE__,$db->error());
 if($db->num_rows($attach_result)){
 	list($attach_rules,$attach_size)=$db->fetch_row($attach_result);
 	if(attach_rules($attach_rules,ATTACH_UPLOAD))
 		$attach_allowed=true;
 }elseif($pun_user['g_id']==PUN_ADMIN){
 	$attach_allowed=true;
-	$attach_size=$pun_config['attach_max_size'];	
+	$attach_size=$pun_config['attach_max_size'];
 }
 //Attachment Mod Block End
 
@@ -618,7 +618,7 @@ viewtopic.php
 #---------[ 41. FIND (line: 27) ]---------------------------------------------
 #
 
-require PUN_ROOT.'include/common.php';	
+require PUN_ROOT.'include/common.php';
 
 
 #
@@ -632,7 +632,7 @@ require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads v
 #---------[ 43. FIND (line: 187) ]--------------------------------------------
 #
 
-while ($cur_post = $db->fetch_assoc($result))
+// Retrieve the posts (and their respective poster/online status)
 
 #
 #---------[ 44. BEFORE, ADD ]--------------------------------------------
