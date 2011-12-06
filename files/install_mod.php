@@ -316,3 +316,8 @@ else
 
 </body>
 </html>
+
+<?php
+
+$db->end_transaction();
+$db->close();
