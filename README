@@ -1,0 +1,13 @@
+Stefan Miklosovic
+miklosovic@gmail.com
+
+This is the modification of original Attachment mod from daris at github 
+https://github.com/daris/fluxbb-attachment-mod suitable for Postgresql 
+installations. Since syntax of SQL queries in AP_Attachment_mod.php and in 
+attachment.php are not working properly under postgresql environment, 
+I rewrote queries in order to make it usable. Everything is the same as 
+in the version 2.1.4 of that mod located here: 
+
+http://fluxbb.org/resources/mods/attachment-mod/
+
+I hope it will be useful.
