@@ -16,7 +16,7 @@ $mod_restore	= true;
 
 
 // This following function will be called when the user presses the "Install" button.
-function install($basepath='')
+function install($basepath = '')
 {
 	global $db, $db_type, $pun_config, $mod_version;
 	//include PUN_ROOT.'include/attach/attach_incl.php';
@@ -25,7 +25,7 @@ function install($basepath='')
 		$basepath = dirname($_SERVER['SCRIPT_FILENAME']).'/attachments/';
 
 	//first check so that the path seems reasonable
-	if(!((substr($basepath,0,1) == '/' || substr($basepath,1,1) == ':') && substr($basepath,-1) == '/'))
+	if (!((substr($basepath,0,1) == '/' || substr($basepath,1,1) == ':') && substr($basepath,-1) == '/'))
 		error('The pathname specified doesn\'t comply with the rules set. Go back and make sure that it\'s the complete path, and that it ends with a slash and that it either start with a slash (example: "/home/username/attachments/", on *nix servers (unix, linux, bsd, solaris etc.)) or a driveletter (example: "C:/webpages/attachments/" on windows servers)');
 
 	// create the files table
@@ -149,17 +149,18 @@ function install($basepath='')
 
 }
 
-function attach_create_subfolder($newfolder='',$basepath){
-
+function attach_create_subfolder($newfolder='',$basepath)
+{
 	// check to see if that folder is there already, then just update the config ...
-	if(!is_dir($basepath.$newfolder)){
+	if (!is_dir($basepath.$newfolder))
+	{
 		// if the folder doesn't exist, try to create it
-		if(!mkdir($basepath.$newfolder,0755))
+		if (!mkdir($basepath.$newfolder,0755))
 			error('Unable to create new subfolder with name \''.$basepath.$newfolder.'\' with mode 0755',__FILE__,__LINE__);
 		// create a .htaccess and index.html file in the new subfolder
-		if(!copy($basepath.'.htaccess', $basepath.$newfolder.'/.htaccess'))
+		if (!copy($basepath.'.htaccess', $basepath.$newfolder.'/.htaccess'))
 			error('Unable to copy .htaccess file to new subfolder with name \''.$basepath.$newfolder.'\'',__FILE__,__LINE__);
-		if(!copy($basepath.'index.html', $basepath.$newfolder.'/index.html'))
+		if (!copy($basepath.'index.html', $basepath.$newfolder.'/index.html'))
 			error('Unable to copy index.html file to new subfolder with name \''.$basepath.$newfolder.'\'',__FILE__,__LINE__);
 		// if the folder was created continue
 	}
@@ -167,25 +168,33 @@ function attach_create_subfolder($newfolder='',$basepath){
 	return true;
 }
 
-function attach_generate_pathname($storagepath=''){
-	if(strlen($storagepath)!=0){
+function attach_generate_pathname($storagepath='')
+{
+	if (strlen($storagepath) != 0)
+	{
 		//we have to check so that path doesn't exist already...
 		$not_unique=true;
-		while($not_unique){
+		while($not_unique)
+		{
 			$newdir = attach_generate_pathname();
-			if(!is_dir($storagepath.$newdir))return $newdir;
+			if (!is_dir($storagepath.$newdir))
+				return $newdir;
 		}
-	}else
-		return substr(md5(time().'54£7 k3yw0rd, r3pl4ce |f U w4nt t0'),0,32);
+	}
+	else
+		return substr(md5(time().'54£7 k3yw0rd, r3pl4ce |f U w4nt t0'), 0, 32);
 }
 
 
 
-function attach_generate_filename($storagepath, $messagelenght=0, $filesize=0){
+function attach_generate_filename($storagepath, $messagelenght = 0, $filesize = 0)
+{
 	$not_unique=true;
-	while($not_unique){
+	while($not_unique)
+	{
 		$newfile = md5(attach_generate_pathname().$messagelenght.$filesize.'Some more salt keyworbs, change if you want to').'.attach';
-		if(!is_file($storagepath.$newfile))return $newfile;
+		if (!is_file($storagepath.$newfile))
+			return $newfile;
 	}
 }
 

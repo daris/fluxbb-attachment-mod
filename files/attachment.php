@@ -49,18 +49,18 @@ $result = $db->query('SELECT post_id, filename, extension, mime, location, size 
 if($db->num_rows($result)!=1)
 	message($lang_common['Bad request']);
 
-list($attach_post_id,$attach_filename,$attach_extension,$attach_mime,$attach_location,$attach_size) = $db->fetch_row($result);
+list($attach_post_id, $attach_filename, $attach_extension, $attach_mime, $attach_location, $attach_size) = $db->fetch_row($result);
 
 // fetch the rules for the forum where the attachment resides and check if one may download it...
 $attach_allow_download=false;
 $result = $db->query('SELECT ar.rules FROM '.$db->prefix.'attach_2_rules AS ar, '.$db->prefix.'topics AS t, '.$db->prefix.'posts AS p WHERE ar.group_id='.$pun_user['group_id'].' AND ar.forum_id=t.forum_id AND t.id=p.topic_id AND p.id='.$attach_post_id.' LIMIT 1')or error('Unable to get ruleset for attachment',__FILE__,__LINE__,$db->error());
-if($db->num_rows($result)==1)
+if($db->num_rows($result) == 1)
 {
 	list($attach_rules)=$db->fetch_row($result);
-	$attach_allow_download = attach_rules($attach_rules,ATTACH_DOWNLOAD);
+	$attach_allow_download = attach_rules($attach_rules, ATTACH_DOWNLOAD);
 }
-elseif($pun_user['g_id']==PUN_ADMIN)
-	$attach_allow_download = true; 	//admins always allowed to download 
+else if ($pun_user['g_id'] == PUN_ADMIN)
+	$attach_allow_download = true; 	//admins always allowed to download
 
 else
 	$attach_allow_download = false;
@@ -69,16 +69,18 @@ else
 // so if one isn't allowed to download, give them the no permission message...
 if(!$attach_allow_download)
 	message($lang_common['No permission']);
-	
+
 // ok, if you've got to here you may download the file ...
 // later add possibility to resume files ... but not in Attachment Mod 2.0 ;-)
-if (($attach_extension=='jpg' || $attach_extension=='jpeg' || $attach_extension=='gif' || $attach_extension=='png') && !isset($_GET['download'])) // show the imageview page
+if (($attach_extension == 'jpg' || $attach_extension == 'jpeg' || $attach_extension == 'gif' || $attach_extension == 'png') && !isset($_GET['download'])) // show the imageview page
 {
 	$page_title = array(pun_htmlspecialchars($pun_config['o_board_title']), $lang_attach['Image view'], pun_htmlspecialchars($attach_filename));
 	define('PUN_ALLOW_INDEX', 1);
 	define('PUN_ACTIVE_PAGE', 'index');
 	require 'header.php';
-	?>
+
+?>
+
 <div id="msg" class="block">
 	<h2><span><?php echo $lang_attach['Image view'] ?></span></h2>
 
@@ -89,8 +91,8 @@ if (($attach_extension=='jpg' || $attach_extension=='jpeg' || $attach_extension=
 		<p><a href="javascript: history.go(-1)"><?php echo $lang_common['Go back'] ?></a></p>
 		</div>
 	</div>
-</div>	
-	<?php	
+</div>
+<?php
 	require 'footer.php';
 
 }
@@ -102,22 +104,22 @@ $db->close(); // end db connection - needed for other than mysql db
 
 // open a pointer to the file
 $fp = fopen($pun_config['attach_basefolder'].$attach_location, "rb");
-if(!$fp)
+if (!$fp)
 	message($lang_common['Bad request']);
 
 $attach_filename=rawurlencode($attach_filename);	// fix filename (spaces may still mess things up, perhaps add a specific MSIE thing later, not sure though)
 
 // send some headers
 header('Content-Disposition: attachment; filename='.$attach_filename);
-if(strlen($attach_mime)!=0)
+if (strlen($attach_mime) != 0)
 	header('Content-Type: ' . $attach_mime );
 else
 	header('Content-type: application/octet-stream'); // a default mime is nothing is defined for the file
 
 header('Pragma: no-cache'); //hmm, I suppose this might be possible to skip, to save some bw, but I'm far from sure, so I let the 'no cache stuff' be...
-header('Expires: 0'); 
+header('Expires: 0');
 header('Connection: close'); // Thanks to Dexus for figuring out this header (on some systems there was a delay for 5-7s for downloading)
-if($attach_size!=0)
+if ($attach_size != 0)
 	header('Content-Length: '.$attach_size);
 
 // and finally send the file, fpassthru might be replaced later, rumors say fpassthru use alot of memory...

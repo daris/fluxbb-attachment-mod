@@ -51,8 +51,12 @@ require PUN_ROOT.'include/attach/attach_incl.php'; //Attachment Mod row, loads v
 // If we have any input
 //
 
-if(isset($_POST['read_documentation'])){	// the user wants to read the documentation, so let him/her do so...
-	generate_admin_menu($plugin);	// Display the admin navigation menu
+// the user wants to read the documentation, so let him/her do so...
+if(isset($_POST['read_documentation']))
+{
+	// Display the admin navigation menu
+	generate_admin_menu($plugin);
+
 ?>
 	<div class="block">
 		<h2><span>Attachment Mod <?php echo $pun_config['attach_cur_version'] ?> - Documentation</span></h2>
@@ -222,25 +226,29 @@ if(isset($_POST['read_documentation'])){	// the user wants to read the documenta
 		</div>
 	</div>
 <?php
-}elseif(isset($_POST['list_attachments'])){
-	if(isset($_POST['start']))
+}
+else if (isset($_POST['list_attachments']))
+{
+	if (isset($_POST['start']))
 		$attach_limit_start = intval($_POST['start']);
 	else
 		$attach_limit_start = 0;
-	if(isset($_POST['number']))
+	if (isset($_POST['number']))
 		$attach_limit_number = intval($_POST['number']);
 	else
 		$attach_limit_number = 50;
-	if(isset($_POST['auto_increase']))
-		$attach_auto_increase = (intval($_POST['auto_increase'])==1)?$attach_limit_start+$attach_limit_number:$attach_limit_start;
+	if (isset($_POST['auto_increase']))
+		$attach_auto_increase = (intval($_POST['auto_increase']) == 1) ? $attach_limit_start + $attach_limit_number : $attach_limit_start;
 	else
 		$attach_auto_increase = $attach_limit_start;
-	if(isset($_POST['direction']))
-		$attach_result_direction = (intval($_POST['direction'])==1)?'ASC':'DESC';
+	if (isset($_POST['direction']))
+		$attach_result_direction = (intval($_POST['direction']) == 1) ? 'ASC' : 'DESC';
 	else
 		$attach_result_direction = 'ASC';
-	if(isset($_POST['order']))
-		switch (intval($_POST['order'])){
+
+	if (isset($_POST['order']))
+		switch (intval($_POST['order']))
+		{
 			case 0:
 				$attach_result_order = 'af.id';
 				break;
@@ -260,7 +268,9 @@ if(isset($_POST['read_documentation'])){	// the user wants to read the documenta
 	else
 		$attach_result_order = 'af.id';
 
-	generate_admin_menu($plugin);	// Display the admin navigation menu
+	// Display the admin navigation menu
+	generate_admin_menu($plugin);
+
 ?>
 	<div class="blockform">
 		<h2><span>Attachment Mod <?php echo $pun_config['attach_cur_version']; ?> - List attachments</span></h2>
@@ -312,7 +322,7 @@ if(isset($_POST['read_documentation'])){	// the user wants to read the documenta
 <?php
 
 	//search for all attachments ...
-	$result = $db->query('SELECT af.id, af.owner, af.post_id, af.filename, af.extension, af.size, af.downloads, u.username FROM '.$db->prefix.'attach_2_files AS af LEFT JOIN '.$db->prefix.'users AS u ON u.id=af.owner ORDER BY '.$attach_result_order.' '.$attach_result_direction.' LIMIT '.$attach_limit_start.','.$attach_limit_number) or error('Unable to fetch attachments',__FILE__,__LINE__,$db->error());
+	$result = $db->query('SELECT af.id, af.owner, af.post_id, af.filename, af.extension, af.size, af.downloads, u.username FROM '.$db->prefix.'attach_2_files AS af LEFT JOIN '.$db->prefix.'users AS u ON u.id=af.owner ORDER BY '.$attach_result_order.' '.$attach_result_direction.' LIMIT '.$attach_limit_start.','.$attach_limit_number) or error('Unable to fetch attachments', __FILE__, __LINE__, $db->error());
 	if ($db->num_rows($result))
 	{
 
@@ -365,17 +375,19 @@ if(isset($_POST['read_documentation'])){	// the user wants to read the documenta
 		</div>
 	</div>
 <?php
-}elseif(isset($_POST['delete_orphan'])){
-	//ok, delte this attachment
+}
+else if (isset($_POST['delete_orphan']))
+{
+	// ok, delete this attachment
 	if(attach_delete_attachment(intval($_POST['attachment_id'])))
 		message('Orpahn attachment deleted.');
 	else
 		message('Error when deleting orphan. Orphan attachment not deleted.');
 
 }
-elseif (isset($_POST['delete_attachment']))
+else if (isset($_POST['delete_attachment']))
 {
-	//ok, delete this attachment
+	// ok, delete this attachment
 	if (attach_delete_attachment(intval($_POST['attachment_id'])))
 		redirect($_SERVER['REQUEST_URI'], 'Attachment deleted.');
 	else
@@ -385,12 +397,13 @@ elseif (isset($_POST['delete_attachment']))
 elseif(isset($_POST['list_orphans']))
 {
 	//search for all attachments ...
-	$result = $db->query('SELECT af.id, af.owner, af.post_id, af.filename, af.extension, af.size, af.downloads, u.username FROM '.$db->prefix.'attach_2_files AS af LEFT JOIN '.$db->prefix.'posts AS p ON p.id=af.post_id LEFT JOIN '.$db->prefix.'users AS u ON u.id=af.owner WHERE p.id IS NULL') or error('Unable to fetch attachments',__FILE__,__LINE__,$db->error());
+	$result = $db->query('SELECT af.id, af.owner, af.post_id, af.filename, af.extension, af.size, af.downloads, u.username FROM '.$db->prefix.'attach_2_files AS af LEFT JOIN '.$db->prefix.'posts AS p ON p.id=af.post_id LEFT JOIN '.$db->prefix.'users AS u ON u.id=af.owner WHERE p.id IS NULL') or error('Unable to fetch attachments', __FILE__, __LINE__, $db->error());
 
 	if (!$db->num_rows($result))
 		message('No orphans found. Yipeee. :)');
 
-	generate_admin_menu($plugin);	// Display the admin navigation menu
+	// Display the admin navigation menu
+	generate_admin_menu($plugin);
 
 ?>
 	<div class="blockform">
@@ -443,87 +456,98 @@ elseif(isset($_POST['list_orphans']))
 	</div>
 <?php
 
-}elseif(isset($_POST['delete_orphans'])){
+}
+else if (isset($_POST['delete_orphans']))
+{
 	// search for all orphans,
-	$result_attach = $db->query('SELECT af.id FROM '.$db->prefix.'attach_2_files AS af LEFT JOIN '.$db->prefix.'posts AS p ON p.id=af.post_id WHERE p.id IS NULL') or error('Unable to search for orphans',__FILE__,__LINE__,$db->error());
+	$result_attach = $db->query('SELECT af.id FROM '.$db->prefix.'attach_2_files AS af LEFT JOIN '.$db->prefix.'posts AS p ON p.id=af.post_id WHERE p.id IS NULL') or error('Unable to search for orphans', __FILE__, __LINE__, $db->error());
 	// if there is any orphans start deleting them one by one...
-	if($db->num_rows($result_attach)>0){// we have orphan(s)
-		$i=0;
-		while(list($attach_id)=$db->fetch_row($result_attach)){
+	if ($db->num_rows($result_attach) > 0)
+	{
+		// we have orphan(s)
+		$i = 0;
+		while (list($attach_id) = $db->fetch_row($result_attach))
+		{
 			attach_delete_attachment($attach_id);
 			$i++;
 		}
 		message($i.' orphan(s) deleted. Shouldn\'t be any orphans left now');
-	}else{// if there aren't any orphans, tell the user that...
-		message('No orphans found. Yipeee. :)');
 	}
 
-}elseif(isset($_POST['edit_rules'])&&isset($_POST['forum'])){
+	// if there aren't any orphans, tell the user that...
+	else
+		message('No orphans found. Yipeee. :)');
 
-	$attach_output ='';
+}
+else if (isset($_POST['edit_rules']) && isset($_POST['forum']))
+{
+	$attach_output = '';
 	$attach_cur_f_id=intval($_POST['forum']);
 
 	// first some stuff is things are updated, deleted or created ... after this the normal 'edit_rules' will show ...
 
-	if(isset($_POST['update_ruleset'])){
+	if (isset($_POST['update_ruleset']))
+	{
 		// here the update will go ... to update an existing ruleset
 		// calculate the rules
 		$attach_cur_group_rules = 0;
-		$attach_cur_group_rules += (isset($_POST['download']))?ATTACH_DOWNLOAD:0;
-		$attach_cur_group_rules += (isset($_POST['upload']))?ATTACH_UPLOAD:0;
-		$attach_cur_group_rules += (isset($_POST['owner_delete']))?ATTACH_OWNER_DELETE:0;
-		$attach_cur_group_rules += (isset($_POST['delete']))?ATTACH_DELETE:0;
+		$attach_cur_group_rules += (isset($_POST['download'])) ? ATTACH_DOWNLOAD : 0;
+		$attach_cur_group_rules += (isset($_POST['upload'])) ? ATTACH_UPLOAD : 0;
+		$attach_cur_group_rules += (isset($_POST['owner_delete'])) ? ATTACH_OWNER_DELETE : 0;
+		$attach_cur_group_rules += (isset($_POST['delete'])) ? ATTACH_DELETE : 0;
 		$attach_cur_group_id = intval($_POST['edit_ruleset']);
-		$attach_cur_group_size = ($pun_config['attach_max_size']>intval($_POST['size']))?intval($_POST['size']):$pun_config['attach_max_size'];
+		$attach_cur_group_size = ($pun_config['attach_max_size'] > intval($_POST['size'])) ? intval($_POST['size']) : $pun_config['attach_max_size'];
 		$attach_cur_group_per_post = intval($_POST['per_post']);
 		$attach_cur_group_file_ext = $db->escape($_POST['file_ext']);
 
-		if($attach_cur_group_rules != 0)
-			$result = $db->query('UPDATE '.$db->prefix.'attach_2_rules SET rules=\''.$attach_cur_group_rules.'\', size=\''.$attach_cur_group_size.'\', per_post=\''.$attach_cur_group_per_post.'\', file_ext=\''.$attach_cur_group_file_ext.'\' WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\'')or error('Unable to update ruleset for group',__FILE__,__LINE__,$db->error());
+		if ($attach_cur_group_rules != 0)
+			$result = $db->query('UPDATE '.$db->prefix.'attach_2_rules SET rules=\''.$attach_cur_group_rules.'\', size=\''.$attach_cur_group_size.'\', per_post=\''.$attach_cur_group_per_post.'\', file_ext=\''.$attach_cur_group_file_ext.'\' WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\'') or error('Unable to update ruleset for group', __FILE__, __LINE__, $db->error());
 		else
-			$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_rules WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\'')or error('Unable to update/delete ruleset for group',__FILE__,__LINE__,$db->error());
+			$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_rules WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\'') or error('Unable to update/delete ruleset for group', __FILE__, __LINE__, $db->error());
 
-	}elseif(isset($_POST['delete_ruleset'])){
+	}
+	elseif (isset($_POST['delete_ruleset']))
+	{
 		// here the deletes will go ... to delete an existing ruleset
 		$attach_cur_group_id = intval($_POST['edit_ruleset']);
 
-		$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_rules WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\'')or error('Unable to delete ruleset for group',__FILE__,__LINE__,$db->error());
-
-
-	}elseif(isset($_POST['create_ruleset'])){
+		$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_rules WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\'') or error('Unable to delete ruleset for group', __FILE__, __LINE__, $db->error());
+	}
+	else if (isset($_POST['create_ruleset']))
+	{
 		// here the creates will go ... to create a new ruleset
 		$attach_cur_group_rules = 0;
-		$attach_cur_group_rules += (isset($_POST['download']))?ATTACH_DOWNLOAD:0;
-		$attach_cur_group_rules += (isset($_POST['upload']))?ATTACH_UPLOAD:0;
-		$attach_cur_group_rules += (isset($_POST['owner_delete']))?ATTACH_OWNER_DELETE:0;
-		$attach_cur_group_rules += (isset($_POST['delete']))?ATTACH_DELETE:0;
+		$attach_cur_group_rules += (isset($_POST['download'])) ? ATTACH_DOWNLOAD : 0;
+		$attach_cur_group_rules += (isset($_POST['upload'])) ? ATTACH_UPLOAD : 0;
+		$attach_cur_group_rules += (isset($_POST['owner_delete'])) ? ATTACH_OWNER_DELETE : 0;
+		$attach_cur_group_rules += (isset($_POST['delete'])) ? ATTACH_DELETE : 0;
 		$attach_cur_group_id = intval($_POST['newgroup']);
 		$attach_cur_group_size = intval($_POST['size']);
 		$attach_cur_group_per_post = intval($_POST['per_post']);
 		$attach_cur_group_file_ext = $db->escape($_POST['file_ext']);
 
-		if($attach_cur_group_rules != 0)
-			$result = $db->query('INSERT INTO '.$db->prefix.'attach_2_rules (group_id, forum_id, rules, size, per_post, file_ext) VALUES (\''.$attach_cur_group_id.'\', \''.$attach_cur_f_id.'\', \''.$attach_cur_group_rules.'\', \''.$attach_cur_group_size.'\', \''.$attach_cur_group_per_post.'\', \''.$attach_cur_group_file_ext.'\')')or error('Unable to create ruleset',__FILE__,__LINE__,$db->error());
+		if ($attach_cur_group_rules != 0)
+			$result = $db->query('INSERT INTO '.$db->prefix.'attach_2_rules (group_id, forum_id, rules, size, per_post, file_ext) VALUES (\''.$attach_cur_group_id.'\', \''.$attach_cur_f_id.'\', \''.$attach_cur_group_rules.'\', \''.$attach_cur_group_size.'\', \''.$attach_cur_group_per_post.'\', \''.$attach_cur_group_file_ext.'\')') or error('Unable to create ruleset', __FILE__, __LINE__, $db->error());
 		else
 			message('You need to allow the group to do anything to add them to the rules for the forum! No new ruleset created.');
-
 	}
-	elseif(isset($_POST['apply_ruleset']))
+	else if (isset($_POST['apply_ruleset']))
 	{
 		$attach_forums = (isset($_POST['forums'])) ? $_POST['forums'] : array();
 
-		$result2 = $db->query('SELECT group_id, rules, size, per_post, file_ext FROM '.$db->prefix.'attach_2_rules WHERE forum_id='.$attach_cur_f_id.' ORDER BY group_id')or error('Unable to fetch rights for users in forum',__FILE__,__LINE__,$db->error());
+		$result2 = $db->query('SELECT group_id, rules, size, per_post, file_ext FROM '.$db->prefix.'attach_2_rules WHERE forum_id='.$attach_cur_f_id.' ORDER BY group_id') or error('Unable to fetch rights for users in forum', __FILE__, __LINE__, $db->error());
 		$attach_rules = array();
 		while ($cur_rule = $db->fetch_assoc($result2))
 			$attach_rules[] = $cur_rule;
 
 		foreach ($attach_forums as $forum_id)
 		{
-			$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_rules WHERE forum_id=\''.$forum_id.'\'')or error('Unable to delete ruleset for forum',__FILE__,__LINE__,$db->error());
+			$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_rules WHERE forum_id=\''.$forum_id.'\'') or error('Unable to delete ruleset for forum', __FILE__, __LINE__, $db->error());
 
 			foreach ($attach_rules as $cur_rule)
-				$result = $db->query('INSERT INTO '.$db->prefix.'attach_2_rules (group_id, forum_id, rules, size, per_post, file_ext) VALUES (\''.$cur_rule['group_id'].'\', \''.$forum_id.'\', \''.$cur_rule['rules'].'\', \''.$cur_rule['size'].'\', \''.$cur_rule['per_post'].'\', \''.$cur_rule['file_ext'].'\')') or error('Unable to create ruleset',__FILE__,__LINE__,$db->error());
+				$result = $db->query('INSERT INTO '.$db->prefix.'attach_2_rules (group_id, forum_id, rules, size, per_post, file_ext) VALUES (\''.$cur_rule['group_id'].'\', \''.$forum_id.'\', \''.$cur_rule['rules'].'\', \''.$cur_rule['size'].'\', \''.$cur_rule['per_post'].'\', \''.$cur_rule['file_ext'].'\')') or error('Unable to create ruleset', __FILE__, __LINE__, $db->error());
 		}
+
 		redirect($_SERVER['REQUEST_URI'], 'Ruleset applied. Redirecting...');
 	}
 	// and now back to the normal 'edit rules'
@@ -534,16 +558,16 @@ elseif(isset($_POST['list_orphans']))
 
 	// generate an array with groupid => groupname (used for matching existing rules, but also for creating new ones...)
 	$attach_grouparray = array();
-	$result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups ORDER BY g_id ASC')or error('Unable to fetch usergroups',__FILE__,__LINE__,$db->error());
-	if($db->num_rows($result)!=0){
-		while(list($key,$value) = $db->fetch_row($result)){
+	$result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups ORDER BY g_id ASC') or error('Unable to fetch usergroups', __FILE__, __LINE__, $db->error());
+	if($db->num_rows($result) != 0)
+	{
+		while (list($key, $value) = $db->fetch_row($result))
 			$attach_grouparray[$key]=$value;
-		}
 	}
 
 	// fetch all the info of this forum
-	$result = $db->query('SELECT forum_name FROM '.$db->prefix.'forums WHERE id='.$attach_cur_f_id.' LIMIT 1')or error('Unable to fetch forum',__FILE__,__LINE__,$db->error());
-	if($db->num_rows($result)==0)
+	$result = $db->query('SELECT forum_name FROM '.$db->prefix.'forums WHERE id='.$attach_cur_f_id.' LIMIT 1') or error('Unable to fetch forum', __FILE__, __LINE__, $db->error());
+	if ($db->num_rows($result) == 0)
 		error('No such forum found');
 	list($attach_cur_f_name) = $db->fetch_row($result);
 
@@ -552,9 +576,11 @@ elseif(isset($_POST['list_orphans']))
 	$attach_sizearray = array();
 	$attach_per_postarray = array();
 	$attach_file_extarray = array();
-	$result_two = $db->query('SELECT group_id, rules, size, per_post, file_ext FROM '.$db->prefix.'attach_2_rules WHERE forum_id='.$attach_cur_f_id.' ORDER BY group_id')or error('Unable to fetch rights for users in forum',__FILE__,__LINE__,$db->error());
-	if($db->num_rows($result_two)!=0){
-		while(list($attach_cur_group_id,$attach_cur_group_rules,$attach_cur_group_size,$attach_cur_group_per_post,$attach_cur_group_file_ext) = $db->fetch_row($result_two)){
+	$result_two = $db->query('SELECT group_id, rules, size, per_post, file_ext FROM '.$db->prefix.'attach_2_rules WHERE forum_id='.$attach_cur_f_id.' ORDER BY group_id') or error('Unable to fetch rights for users in forum', __FILE__, __LINE__, $db->error());
+	if($db->num_rows($result_two)!=0)
+	{
+		while (list($attach_cur_group_id, $attach_cur_group_rules, $attach_cur_group_size, $attach_cur_group_per_post, $attach_cur_group_file_ext) = $db->fetch_row($result_two))
+		{
 			$attach_rightsarray[$attach_cur_group_id] = $attach_cur_group_rules;
 			$attach_sizearray[$attach_cur_group_id] = $attach_cur_group_size;
 			$attach_per_postarray[$attach_cur_group_id] = $attach_cur_group_per_post;
@@ -562,14 +588,16 @@ elseif(isset($_POST['list_orphans']))
 		}
 	}
 	// create output for the existing ones
-	if(count($attach_rightsarray)!=0){
+	if(count($attach_rightsarray) != 0)
+	{
 		$attach_output .= '
 		<h2 class="block2"><span>Existing rules for forum: '.$attach_cur_f_name.'</span></h2>
 		<div class="box">
 			<div id="example">
 				<div class="inform">
 ';
-		foreach ($attach_rightsarray as $key => $value){
+		foreach ($attach_rightsarray as $key => $value)
+		{
 			$attach_cur_group_rules  ='<input type="checkbox" name="download" value="1" ';
 			$attach_cur_group_rules .= (attach_rules($value,ATTACH_DOWNLOAD))?'checked="checked" ':'';
 			$attach_cur_group_rules .='/>Download <input type="checkbox" name="upload" value="1" ';
@@ -632,13 +660,15 @@ elseif(isset($_POST['list_orphans']))
 	}
 	// create output for creating a new one
 
-	if(count($attach_grouparray)>0){
+	if (count($attach_grouparray) > 0)
+	{
 		// generate the select statement
 		$attach_group_select = '
 											<select id="newgroup" name="newgroup">
 ';
-		foreach($attach_grouparray as $key => $value){
-			if($key!=1)$attach_group_select .= '												<option value="'.$key.'">'.$value.'</OPTION>
+		foreach($attach_grouparray as $key => $value)
+		{
+			if ($key != 1) $attach_group_select .= '												<option value="'.$key.'">'.$value.'</OPTION>
 ';
 		}
 		$attach_group_select .= '
@@ -775,31 +805,35 @@ elseif(isset($_POST['list_orphans']))
 <?php
 
 
-
-
-
-}elseif(isset($_POST['list_rules'])){
+}
+else if (isset($_POST['list_rules']))
+{
 
 	$attach_output ='';
 
 	// generate an array with groupid => groupname, used when figuring out what the group is called ...
 	$attach_grouparray = array();
 	$attach_rightsarray = array();
-	$result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups ORDER BY g_id ASC')or error('Unable to fetch usergroups',__FILE__,__LINE__,$db->error());
-	if($db->num_rows($result)!=0){
-		while(list($key,$value) = $db->fetch_row($result)){
-			$attach_grouparray[$key]=$value;
-		}
+	$result = $db->query('SELECT g_id, g_title FROM '.$db->prefix.'groups ORDER BY g_id ASC') or error('Unable to fetch usergroups', __FILE__, __LINE__, $db->error());
+	if($db->num_rows($result)!=0)
+	{
+		while (list($key, $value) = $db->fetch_row($result))
+			$attach_grouparray[$key] = $value;
 	}
 
 	// select all the categorys and forums ...
-	$result = $db->query('SELECT c.cat_name, f.id, f.forum_name FROM '.$db->prefix.'categories AS c, '.$db->prefix.'forums AS f WHERE c.id=f.cat_id ORDER BY c.disp_position, f.disp_position')or error('Unable to fetch categorys and forums',__FILE__,__LINE__,$db->error());
-	if($db->num_rows($result)!=0){
+	$result = $db->query('SELECT c.cat_name, f.id, f.forum_name FROM '.$db->prefix.'categories AS c, '.$db->prefix.'forums AS f WHERE c.id=f.cat_id ORDER BY c.disp_position, f.disp_position') or error('Unable to fetch categorys and forums', __FILE__, __LINE__, $db->error());
+	if($db->num_rows($result) != 0)
+	{
 		$attach_prev_cat_name = '';
-		while(list($attach_cur_cat_name,$attach_cur_f_id,$attach_cur_f_name) = $db->fetch_row($result)){
+		while (list($attach_cur_cat_name, $attach_cur_f_id, $attach_cur_f_name) = $db->fetch_row($result))
+		{
 			// if the category name has changed, and the last one isn't '' end the category and start a new, othervise just start one
-			if($attach_cur_cat_name!=$attach_prev_cat_name){
-				if($attach_prev_cat_name!=''){	// close the last one ...
+			if ($attach_cur_cat_name != $attach_prev_cat_name)
+			{
+				if($attach_prev_cat_name != '')
+				{
+					// close the last one ...
 					$attach_output .= '
 				</div>
 			</div>
@@ -826,13 +860,12 @@ elseif(isset($_POST['list_orphans']))
 			unset($attach_rightsarray);
 			$attach_rightsarray = array();
 			// select all the groups that has rights set in this forum...
-			$result_two = $db->query('SELECT group_id, rules FROM '.$db->prefix.'attach_2_rules WHERE forum_id='.$attach_cur_f_id.' ORDER BY group_id')or error('Unable to fetch rights for users in forum',__FILE__,__LINE__,$db->error());
-			if($db->num_rows($result_two)!=0){
+			$result_two = $db->query('SELECT group_id, rules FROM '.$db->prefix.'attach_2_rules WHERE forum_id='.$attach_cur_f_id.' ORDER BY group_id') or error('Unable to fetch rights for users in forum', __FILE__, __LINE__, $db->error());
+			if ($db->num_rows($result_two) != 0)
+			{
 				// clean up the array ... so we have an empty array to start with
-
-				while(list($attach_cur_group_id,$attach_cur_group_rules) = $db->fetch_row($result_two)){
+				while (list($attach_cur_group_id, $attach_cur_group_rules) = $db->fetch_row($result_two))
 					$attach_rightsarray[$attach_cur_group_id] = $attach_cur_group_rules;
-				}
 
 				// check what they may access ...
 				foreach ($attach_rightsarray as $key => $value)
@@ -914,15 +947,19 @@ elseif(isset($_POST['list_orphans']))
 	echo $attach_output;
 
 
-}elseif(isset($_POST['optimize_tables'])){
+}
+else if (isset($_POST['optimize_tables']))
+{
 	if ($db_type == 'sqlite')
 		message('SQLite does not support optimizing tables.');
 
-	$result = $db->query('OPTIMIZE TABLE '.$db->prefix.'attach_2_files')or error('Unable to optimize table: attach_2_files',__FILE__,__LINE__,$db->error());
-	$result = $db->query('OPTIMIZE TABLE '.$db->prefix.'attach_2_rules')or error('Unable to optimize table: attach_2_rules',__FILE__,__LINE__,$db->error());
+	$result = $db->query('OPTIMIZE TABLE '.$db->prefix.'attach_2_files') or error('Unable to optimize table: attach_2_files', __FILE__, __LINE__, $db->error());
+	$result = $db->query('OPTIMIZE TABLE '.$db->prefix.'attach_2_rules') or error('Unable to optimize table: attach_2_rules', __FILE__, __LINE__, $db->error());
 	redirect($_SERVER['REQUEST_URI'], 'Attachment Mod '.$pun_config['attach_cur_version'].', Tables Optimized &hellip;');
 
-}elseif(isset($_POST['update_settings'])){
+}
+else if (isset($_POST['update_settings']))
+{
 	// rewrite stuff from POST variables
 	$form['use_icon'] = intval($_POST['use_icon']);
 	$form['icon_folder'] = $_POST['icon_folder']; //later strip out all < > | ? * " from the string, to try to up the safety
@@ -952,24 +989,27 @@ elseif(isset($_POST['list_orphans']))
 	// Regenerate the config cache
 	require_once PUN_ROOT.'include/cache.php';
 	generate_config_cache();
-// end of stuff taken from admin_options
+	// end of stuff taken from admin_options
 	redirect($_SERVER['REQUEST_URI'], 'Attachment Mod '.$pun_config['attach_cur_version'].' settings updated. Redirecting &hellip;');
 
 
-}elseif(isset($_POST['generate_subfolder'])||isset($_POST['change_subfolder'])){
+}
+else if (isset($_POST['generate_subfolder']) || isset($_POST['change_subfolder']))
+{
 	// if the latter, we should use that instead for new folder
-	if(isset($_POST['change_subfolder']))	// we want to use the entered subfolder
+	if (isset($_POST['change_subfolder']))	// we want to use the entered subfolder
 		$newname = $_POST['subfolder'];		// fiddle with security later... i.e. only allow 0-9 + a-z
 	else
 		$newname = attach_generate_pathname($pun_config['attach_basefolder']);	// ok, we doesn't need to use a folder that has been created beforehand ...
 
-	if(!attach_create_subfolder($newname))
-		error('Unable to create new subfolder with name '.$newname,__FILE__,__LINE__);
+	if (!attach_create_subfolder($newname))
+		error('Unable to create new subfolder with name '.$newname, __FILE__, __LINE__);
 	else
 		redirect($_SERVER['REQUEST_URI'], 'Attachment Mod '.$pun_config['attach_cur_version'].' new subfolder created. Redirecting &hellip;');
 
-
-}elseif(isset($_POST['alter_settings'])||isset($_GET['alter_settings'])){
+}
+else if (isset($_POST['alter_settings']) || isset($_GET['alter_settings']))
+{
 	// Display the admin navigation menu
 	generate_admin_menu($plugin);
 ?>
@@ -1082,17 +1122,24 @@ elseif(isset($_POST['list_orphans']))
 		</div>
 	</div>
 <?php
-}else{		// Nothing has been asked for, design the 'main page'
 
+}
+
+// Nothing has been asked for, design the 'main page'
+else
+{
 	// calculate some statistics
-	$result = $db->query('SELECT COUNT(id) FROM '.$db->prefix.'attach_2_files')or error('Unable to count number of attachment files',__FILE__,__LINE__,$db->error());
-	if($db->num_rows($result)!=0){
+	$result = $db->query('SELECT COUNT(id) FROM '.$db->prefix.'attach_2_files') or error('Unable to count number of attachment files', __FILE__, __LINE__, $db->error());
+	if($db->num_rows($result)!=0)
+	{
 		list($attach_number_of_rows) = $db->fetch_row($result);
-		if($attach_number_of_rows!=0){
+		if($attach_number_of_rows != 0)
+		{
 			$attach_output = "Number of attachments: $attach_number_of_rows<br />\n						";
 			// figure out the disk usage, taken from the mysql tables ...
-			$result = $db->query('SELECT SUM(size),SUM(downloads),SUM(downloads*size) FROM '.$db->prefix.'attach_2_files')or error('Unable to summarize disk usage',__FILE__,__LINE__,$db->error());
-			if($db->num_rows($result)!=0){
+			$result = $db->query('SELECT SUM(size),SUM(downloads),SUM(downloads*size) FROM '.$db->prefix.'attach_2_files') or error('Unable to summarize disk usage', __FILE__, __LINE__, $db->error());
+			if($db->num_rows($result) != 0)
+			{
 				list($attach_size,$attach_downloads,$attach_total_transfer) = $db->fetch_row($result);
 				$attach_output .= 'Used diskspace: '.file_size($attach_size)."<br />\n						";
 				$attach_output .= 'Total downloads: '.number_format($attach_downloads)." downloads<br />\n						";
@@ -1100,31 +1147,38 @@ elseif(isset($_POST['list_orphans']))
 			}
 
 			// select the most downloaded file
-			$result = $db->query('SELECT id, owner, filename, size, downloads FROM '.$db->prefix.'attach_2_files ORDER BY downloads DESC LIMIT 1')or error('Unable to fetch most downloaded attachment',__FILE__,__LINE__,$db->error());
-			if($db->num_rows($result)!=0){
-				list($attach_most_id,$attach_most_owner_id,$attach_most_filename,$attach_most_size,$attach_most_downloads) = $db->fetch_row($result);
-				$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE id = '.$attach_most_owner_id.' LIMIT 1')or error('Unable to fetch name on user with most downloaded attachment',__FILE__,__LINE__,$db->error());
-				if($db->num_rows($result)==1)
-				list($attach_most_owner) = $db->fetch_row($result);
+			$result = $db->query('SELECT id, owner, filename, size, downloads FROM '.$db->prefix.'attach_2_files ORDER BY downloads DESC LIMIT 1') or error('Unable to fetch most downloaded attachment', __FILE__, __LINE__, $db->error());
+			if($db->num_rows($result) != 0)
+			{
+				list($attach_most_id, $attach_most_owner_id, $attach_most_filename, $attach_most_size, $attach_most_downloads) = $db->fetch_row($result);
+				$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE id = '.$attach_most_owner_id.' LIMIT 1') or error('Unable to fetch name on user with most downloaded attachment', __FILE__, __LINE__, $db->error());
+				if ($db->num_rows($result) == 1)
+					list($attach_most_owner) = $db->fetch_row($result);
 				else
-				$attach_most_owner = 'Now a guest';
+					$attach_most_owner = 'Now a guest';
+
 				$attach_output .= 'Most downloaded: '.number_format($attach_most_downloads).' downloads - <a href="attachment.php?item='.$attach_most_id.'">'.pun_htmlspecialchars($attach_most_filename).'</a> ('.file_size($attach_most_size).') posted by <a href="profile.php?section=admin&amp;id='.$attach_most_owner_id.'">'.pun_htmlspecialchars($attach_most_owner).'</a>';
-			}else
-			$attach_output .= 'Most downloaded: none';
+			}
+			else
+				$attach_output .= 'Most downloaded: none';
 
 			// select the attachment with largest total size (size*downloads)
-			$result = $db->query('SELECT id, owner, filename, size, downloads FROM '.$db->prefix.'attach_2_files ORDER BY downloads*size DESC LIMIT 1')or error('Unable to fetch downloaded attachment with most transfersize',__FILE__,__LINE__,$db->error());
-			if($db->num_rows($result)!=0){
-				list($attach_most_id,$attach_most_owner_id,$attach_most_filename,$attach_most_size,$attach_most_downloads) = $db->fetch_row($result);
-				$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE id = '.$attach_most_owner_id.' LIMIT 1')or error('Unable to fetch name on user with largest total downloaded attachment',__FILE__,__LINE__,$db->error());
-				if($db->num_rows($result)==1)
-				list($attach_most_owner) = $db->fetch_row($result);
+			$result = $db->query('SELECT id, owner, filename, size, downloads FROM '.$db->prefix.'attach_2_files ORDER BY downloads*size DESC LIMIT 1') or error('Unable to fetch downloaded attachment with most transfersize', __FILE__, __LINE__, $db->error());
+			if($db->num_rows($result)!=0)
+			{
+				list($attach_most_id, $attach_most_owner_id, $attach_most_filename, $attach_most_size, $attach_most_downloads) = $db->fetch_row($result);
+				$result = $db->query('SELECT username FROM '.$db->prefix.'users WHERE id = '.$attach_most_owner_id.' LIMIT 1') or error('Unable to fetch name on user with largest total downloaded attachment', __FILE__, __LINE__, $db->error());
+				if ($db->num_rows($result) == 1)
+					list($attach_most_owner) = $db->fetch_row($result);
 				else
-				$attach_most_owner = 'Now a guest';
+					$attach_most_owner = 'Now a guest';
+
 				$attach_output .= "<br />\n".'Largest total download: '.file_size($attach_most_downloads*$attach_most_size).' - <a href="attachment.php?item='.$attach_most_id.'">'.pun_htmlspecialchars($attach_most_filename).'</a> ('.file_size($attach_most_size).', '.number_format($attach_most_downloads).' downloads) posted by <a href="profile.php?section=admin&amp;id='.$attach_most_owner_id.'">'.pun_htmlspecialchars($attach_most_owner).'</a>';
-			}else
-			$attach_output .= "<br />\n".'Largest total download: none';
-		}else
+			}
+			else
+				$attach_output .= "<br />\n".'Largest total download: none';
+		}
+		else
 			$attach_output = 'No attachments<br>&nbsp;<br>&nbsp;'; // Ugly hack due to pageformatting goes funny without those extra rows...
 	}
 
