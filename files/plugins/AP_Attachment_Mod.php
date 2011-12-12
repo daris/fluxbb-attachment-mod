@@ -479,15 +479,15 @@ elseif(isset($_POST['list_orphans']))
 		$attach_cur_group_file_ext = $db->escape($_POST['file_ext']);
 
 		if($attach_cur_group_rules != 0)
-			$result = $db->query('UPDATE '.$db->prefix.'attach_2_rules SET rules=\''.$attach_cur_group_rules.'\', size=\''.$attach_cur_group_size.'\', per_post=\''.$attach_cur_group_per_post.'\', file_ext=\''.$attach_cur_group_file_ext.'\' WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\' LIMIT 1')or error('Unable to update ruleset for group',__FILE__,__LINE__,$db->error());
+			$result = $db->query('UPDATE '.$db->prefix.'attach_2_rules SET rules=\''.$attach_cur_group_rules.'\', size=\''.$attach_cur_group_size.'\', per_post=\''.$attach_cur_group_per_post.'\', file_ext=\''.$attach_cur_group_file_ext.'\' WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\'')or error('Unable to update ruleset for group',__FILE__,__LINE__,$db->error());
 		else
-			$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_rules WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\' LIMIT 1')or error('Unable to update/delete ruleset for group',__FILE__,__LINE__,$db->error());
+			$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_rules WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\'')or error('Unable to update/delete ruleset for group',__FILE__,__LINE__,$db->error());
 
 	}elseif(isset($_POST['delete_ruleset'])){
 		// here the deletes will go ... to delete an existing ruleset
 		$attach_cur_group_id = intval($_POST['edit_ruleset']);
 
-		$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_rules WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\' LIMIT 1')or error('Unable to delete ruleset for group',__FILE__,__LINE__,$db->error());
+		$result = $db->query('DELETE FROM '.$db->prefix.'attach_2_rules WHERE group_id=\''.$attach_cur_group_id.'\' AND forum_id=\''.$attach_cur_f_id.'\'')or error('Unable to delete ruleset for group',__FILE__,__LINE__,$db->error());
 
 
 	}elseif(isset($_POST['create_ruleset'])){
@@ -610,7 +610,7 @@ elseif(isset($_POST['list_orphans']))
 									<tr>
 										<th scope="row">Allowed files</th>
 										<td>
-											<input type="text" name="file_ext" value="'.$attach_file_extarray[$key].'" size="80" />
+											<input type="text" name="file_ext" value="'.$attach_file_extarray[$key].'" size="50" />
 											<span>If empty, allow all files except those to always deny.</span>
 										</td>
 									</tr>
@@ -685,7 +685,7 @@ elseif(isset($_POST['list_orphans']))
 									<tr>
 										<th scope="row">Allowed files</th>
 										<td>
-											<input type="text" name="file_ext" value="" size="80" />
+											<input type="text" name="file_ext" value="" size="50" />
 											<span>If empty, allow all files except those to always deny.</span>
 										</td>
 									</tr>
