@@ -303,7 +303,7 @@ function attach_delete_attachment($item = 0)
 	{
 		// fetch the info for the file
 		$result = $db->query('SELECT af.location FROM '.$db->prefix.'attach_2_files AS af WHERE af.id='.intval($item).' LIMIT 1')or error('Unable to load file info',__FILE__,__LINE__,$db->error());
-		if ($db->num_rows($result) = =1)
+		if ($db->num_rows($result) == 1)
 			list($attach_location) = $db->fetch_row($result);
 		// first empty the file
 		$fp = fopen($pun_config['attach_basefolder'].$attach_location,'wb'); //wb = write, reset file to 0 bytes if existing, and b is just for windows, to tell it's binary mode...is ignored on other OS:es
