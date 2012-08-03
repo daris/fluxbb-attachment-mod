@@ -281,7 +281,7 @@ function attach_delete_attachment($item = 0)
 	// check if the user may delete it ... can be overridden, but that's only if create orphans are off...
 	$attach_allowed_delete = false;
 
-	if($pun_user['g_id' ]== PUN_ADMIN)
+	if ($pun_user['g_id']== PUN_ADMIN)
 		$attach_allowed_delete = true;
 	else
 	{
@@ -324,14 +324,14 @@ function attach_delete_thread($id = 0)
 	$ok = true;
 
 	// check if orphans should be made or not
-	if($pun_config['attach_create_orphans'] != 1)
+	if ($pun_config['attach_create_orphans'] != 1)
 	{
 		//if delete, fetch all post id's of the posts in this thread
 		$result_attach = $db->query('SELECT af.id FROM '.$db->prefix.'attach_2_files AS af, '.$db->prefix.'posts AS p WHERE af.post_id=p.id AND p.topic_id='.intval($id)) or error('Error when searching for all attachments in this thread', __FILE__, __LINE__);
 		if ($db->num_rows($result_attach) > 0)
 		{
 			//fetch all attachment id's
-			while ((list($attach_id)=$db->fetch_row($result_attach)) && $ok)
+			while ((list($attach_id) = $db->fetch_row($result_attach)) && $ok)
 			{
 				// loop though and delete attachment after attachment (this can take a loooong time)
 				$ok = attach_delete_attachment($attach_id);
@@ -349,7 +349,7 @@ function attach_delete_post($id = 0)
 	// check for all attachments,
 	$result = $db->query('SELECT af.id FROM '.$db->prefix.'attach_2_files AS af WHERE af.post_id='.intval($id)) or error('Error when searching for all attachments in this post', __FILE__, __LINE__);
 
-	if($db->num_rows($result) > 0)
+	if ($db->num_rows($result) > 0)
 	{
 		// try to delete each post (I'm using the 'override check' in attach_delete_attachment, so nothing is needed here...)
 		while ((list($attach_id) = $db->fetch_row($result)) && $ok)

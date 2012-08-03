@@ -3,14 +3,14 @@
 ##        Mod title:  Attachment Mod
 ##
 ##      Mod version:  2.1.4
-##  Works on FluxBB:  1.4.7, 1.4.6
+##  Works on FluxBB:  1.4.8, 1.4.7, 1.4.6
 ##     Release date:  2011-10-29
 ##      Review date:  2011-10-29
-##           Author:  Daris (daris91@gmail.com)
+##       Maintainer:  Daris (daris91@gmail.com)
+##           Author:  Frank Hagstrom (frank.hagstrom+punbb@gmail.com)
 ##
 ##      Description:  This mod will add the ability for attachments being
-##                    posted in FluxBB 1.4.5. Orginally developed by
-##                    Frank Hagstrom (frank.hagstrom+punbb@gmail.com)
+##                    posted in FluxBB 1.4.5.
 ##
 ##   Repository URL:  http://fluxbb.org/resources/mods/attachment-mod/
 ##
