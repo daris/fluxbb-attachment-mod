@@ -100,6 +100,7 @@ if (($attach_extension == 'jpg' || $attach_extension == 'jpeg' || $attach_extens
 // put the file out for download
 // update number of downloads
 $result = $db->query('UPDATE '.$db->prefix.'attach_2_files SET downloads=downloads+1 WHERE id='.$attach_item) or error('Unable to update downloads',__FILE__,__LINE__,$db->error());
+$db->end_transaction();
 $db->close(); // end db connection - needed for other than mysql db
 
 // open a pointer to the file
